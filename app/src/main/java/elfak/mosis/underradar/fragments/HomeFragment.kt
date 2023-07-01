@@ -5,29 +5,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 import elfak.mosis.underradar.R
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class HomeFragment : Fragment(), OnMapReadyCallback {
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var map: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -35,26 +27,45 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+        val rootview=inflater.inflate(R.layout.fragment_home, container, false)
+        val mapFragment=childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+
+        mapFragment!!.getMapAsync{ mMap ->
+            mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+
+            mMap.clear() //clear old markers
+            mMap.uiSettings.isZoomControlsEnabled = true
+            mMap.uiSettings.isCompassEnabled = true
+
+            val googlePlex = CameraPosition.builder()
+                .target(LatLng(43.32472, 21.90333))
+                .zoom(10f)
+                .bearing(0f)
+                .tilt(45f)
+                .build()
+
+            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 10000, null)
+
+            mMap.addMarker(
+                MarkerOptions()
+                    .position(LatLng(43.32472, 21.90333))
+                    .title("Nis")
+            )
+        }
+
+        return rootview
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onMapReady(googleMap: GoogleMap) {
+        map = googleMap
+        val location = LatLng(43.32472, 21.90333) // Example location (San Francisco)
+
+        // Customize map settings if needed
+        map.uiSettings.isZoomControlsEnabled = true
+        map.uiSettings.isCompassEnabled = true
+
+        // Add a marker and move the camera
+        map.addMarker(MarkerOptions().position(location).title("Nis"))
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 12f))
     }
 }

@@ -1,3 +1,9 @@
 package elfak.mosis.underradar.data
 
-data class Comment()
+import java.util.UUID
+
+data class Comment(
+    var id: String= UUID.randomUUID().toString(),
+    var comment: String="",
+    var CommenterId: String=""
+)

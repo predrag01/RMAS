@@ -3,18 +3,20 @@ package elfak.mosis.underradar.fragments
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.ktx.Firebase
 import elfak.mosis.underradar.R
 import elfak.mosis.underradar.data.User
-import elfak.mosis.underradar.databinding.FragmentLoginBinding
 import elfak.mosis.underradar.databinding.FragmentRegisterBinding
 
 class RegisterFragment : Fragment() {
@@ -22,6 +24,7 @@ class RegisterFragment : Fragment() {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var progressDialog : AlertDialog
     private var _binding: FragmentRegisterBinding?=null
+    private  lateinit var database: DatabaseReference
 
     private val binding get() = _binding!!
 
@@ -32,6 +35,7 @@ class RegisterFragment : Fragment() {
         // Inflate the layout for this fragment
         firebaseAuth=FirebaseAuth.getInstance()
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
+        database=FirebaseDatabase.getInstance().getReference("Users")
         return binding.root
     }
 
@@ -101,14 +105,14 @@ class RegisterFragment : Fragment() {
             check= false
         }
 
-        var ConfirmPassword=binding.registerEditTextConfirmpassword.text
-        if(ConfirmPassword.isBlank())
+        var confirmPassword=binding.registerEditTextConfirmpassword.text
+        if(confirmPassword.isBlank())
         {
             binding.textInputConfirmpassword.error="Required"
             check= false
         }
 
-        if(password!=ConfirmPassword)
+        if(password.toString()!=confirmPassword.toString())
         {
             binding.textInputConfirmpassword.error="Confirm password must match with password"
         }
@@ -138,14 +142,15 @@ class RegisterFragment : Fragment() {
 
     private fun createAccount(user: User, password: String, savedInstanceState: Bundle?)
     {
-        firebaseAuth.createUserWithEmailAndPassword(user.email, password).addOnCompleteListener{
-            if(it.isSuccessful){
+        firebaseAuth.createUserWithEmailAndPassword(user.email, password)
+            .addOnSuccessListener {
+                user.id=it.user!!.uid
+                Toast.makeText(context, user.id.toString(), Toast.LENGTH_SHORT).show()
+                database.child(user.id).setValue(user)
                 findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
             }
-            else
-            {
-                Toast.makeText(context, it.exception.toString(), Toast.LENGTH_SHORT).show()
+            .addOnFailureListener{
+                Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
             }
-        }
     }
 }
