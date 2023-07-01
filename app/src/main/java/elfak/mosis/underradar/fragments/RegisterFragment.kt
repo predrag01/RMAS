@@ -14,6 +14,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import elfak.mosis.underradar.R
 import elfak.mosis.underradar.data.User
@@ -35,7 +36,7 @@ class RegisterFragment : Fragment() {
         // Inflate the layout for this fragment
         firebaseAuth=FirebaseAuth.getInstance()
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
-        database=FirebaseDatabase.getInstance().getReference("Users")
+        database=Firebase.database.getReference("Users")
         return binding.root
     }
 
@@ -146,7 +147,11 @@ class RegisterFragment : Fragment() {
             .addOnSuccessListener {
                 user.id=it.user!!.uid
                 Toast.makeText(context, user.id.toString(), Toast.LENGTH_SHORT).show()
-                database.child(user.id).setValue(user)
+                database.child(user.id).setValue(user).addOnSuccessListener {
+                    Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
+                }.addOnFailureListener {
+                    Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
+                }
                 findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
             }
             .addOnFailureListener{
