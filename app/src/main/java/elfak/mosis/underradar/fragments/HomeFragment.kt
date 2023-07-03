@@ -21,21 +21,29 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import elfak.mosis.underradar.R
+import elfak.mosis.underradar.databinding.FragmentHomeBinding
 
-class HomeFragment : Fragment(), OnMapReadyCallback {
+class HomeFragment : Fragment() {
 
-    private lateinit var map: GoogleMap
     private lateinit var lastLocation: Location
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var _binding: FragmentHomeBinding?=null
+    private val binding get()=_binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        val rootview=inflater.inflate(R.layout.fragment_home, container, false)
-        val mapFragment=childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
+        _binding=FragmentHomeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val mapFragment=childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
 
         fusedLocationClient= LocationServices.getFusedLocationProviderClient(requireActivity())
 
@@ -73,20 +81,14 @@ class HomeFragment : Fragment(), OnMapReadyCallback {
             }.addOnFailureListener{
                 Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
             }
-        }
-        return rootview
-    }
 
-    override fun onMapReady(googleMap: GoogleMap) {
-        map = googleMap
+            binding.addButton.setOnClickListener{
+                findNavController().navigate(R.id.action_homeFragment_to_addDeviceFragment)
+            }
 
-        // Customize map settings if needed
-        map.uiSettings.isZoomControlsEnabled = true
-        map.uiSettings.isCompassEnabled = true
-
-        val addButton = requireView().findViewById<Button>(R.id.add_button)
-        addButton.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_addDeviceFragment)
+            binding.profButton.setOnClickListener {
+                findNavController().navigate(R.id.action_homeFragment_to_profileFragment)
+            }
         }
     }
 

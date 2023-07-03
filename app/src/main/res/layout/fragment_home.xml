@@ -21,7 +21,9 @@
         android:layout_marginBottom="40dp"
         android:layout_marginRight="60dp"
         android:layout_gravity="bottom|end"
-        android:text="Add"/>
+        android:text="Add"
+        android:textColor="@color/black"/>
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/prof_button"
@@ -32,7 +34,8 @@
         android:layout_marginTop="70dp"
         android:layout_marginRight="10dp"
         android:layout_gravity="top|end"
-        android:text="Profile"/>
+        android:text="Profile"
+        android:textColor="@color/black"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/filter_button"
@@ -43,6 +46,7 @@
         android:layout_marginTop="130dp"
         android:layout_marginRight="10dp"
         android:layout_gravity="top|end"
-        android:text="Filters"/>
+        android:text="Filters"
+        android:textColor="@color/black"/>
 
 </FrameLayout>
