@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
@@ -18,6 +19,7 @@ import com.google.firebase.ktx.Firebase
 import elfak.mosis.underradar.R
 import elfak.mosis.underradar.data.User
 import elfak.mosis.underradar.databinding.FragmentRegisterBinding
+import elfak.mosis.underradar.viewmodels.UserViewModel
 
 
 class RegisterFragment : Fragment() {
@@ -26,6 +28,7 @@ class RegisterFragment : Fragment() {
     private lateinit var progressDialog : AlertDialog
     private var _binding: FragmentRegisterBinding?=null
     private  lateinit var database: DatabaseReference
+    private val userViewModel: UserViewModel by activityViewModels()
 
     private val binding get() = _binding!!
 
@@ -150,6 +153,7 @@ class RegisterFragment : Fragment() {
             .addOnSuccessListener {
                 user.id=it.user!!.uid
                 database.child("Users").child(user.id).setValue(user)
+                userViewModel.user=user
                 findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
             }
             .addOnFailureListener{

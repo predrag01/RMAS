@@ -17,6 +17,15 @@
     <string name="already_have_an_account_label">Already have an account</string>
     <string name="login_label">Log in</string>
     <string name="create_new_account">Create new account</string>
+    <string name="prompt_message">Choose type of device</string>
+    <string-array name="add_device_dropdown_options">
+        <item>Radar</item>
+        <item>Camera</item>
+    </string-array>
+    <string name="add_device_title">Title</string>
+    <string name="add_device_description">Description</string>
+    <string name="add_device">Add</string>
+    <string name="cancle_device">Cancle</string>
 
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris

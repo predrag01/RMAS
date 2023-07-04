@@ -1,33 +1,33 @@
 package elfak.mosis.underradar.fragments
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.AdapterView
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import elfak.mosis.underradar.R
+import elfak.mosis.underradar.data.Device
+import elfak.mosis.underradar.databinding.FragmentAddDeviceBinding
+import elfak.mosis.underradar.viewmodels.DeviceViewModel
+import elfak.mosis.underradar.viewmodels.UserViewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [AddDeviceFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class AddDeviceFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    private var _binding: FragmentAddDeviceBinding?=null
+    private val userViewModel: UserViewModel by activityViewModels()
+    private val deviceViewModel: DeviceViewModel by activityViewModels()
+    private var selectedIndex=0
+    private lateinit var selected:String
+    private val binding get()=_binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -35,26 +35,63 @@ class AddDeviceFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_device, container, false)
+        _binding=FragmentAddDeviceBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AddDeviceFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            AddDeviceFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.addDeviceDropdownMenu.setSelection(selectedIndex)
+
+        binding.addDeviceDropdownMenu.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                selectedIndex=p2
+                selected= p0!!.getItemAtPosition(p2).toString()
             }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                p0?.setSelection(selectedIndex)
+            }
+        }
+
+        binding.addDeviceAdd.setOnClickListener {
+            (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
+                .hideSoftInputFromWindow(view.windowToken, 0)
+
+            if(checkInput())
+            {
+                var device: Device= Device(
+                    title = binding.addDeviceEditTextTitle.text.toString(),
+                    type = "radar",
+                    description = binding.addDeviceEditTextDescription.text.toString(),
+                    ownerId = userViewModel.user!!.id,
+                    latitude = userViewModel.location!!.latitude,
+                    longitude = userViewModel.location!!.longitude
+                    )
+                deviceViewModel.addDevice(device, userViewModel.user!!)
+                findNavController().navigate(R.id.action_addDeviceFragment_to_homeFragment)
+            }
+        }
+
+        binding.addDeviceCancle.setOnClickListener {
+            findNavController().navigate(R.id.action_addDeviceFragment_to_homeFragment)
+        }
+
+    }
+
+    private fun checkInput(): Boolean
+    {
+        var check=true
+        if(binding.addDeviceEditTextTitle.text.isBlank()) {
+            check = false
+            binding.textInputTitle.error="Field cannot be empty"
+        }
+        if(binding.addDeviceEditTextDescription.text.isBlank())
+        {
+            check=false
+            binding.textInputDescription.error="Field cannot be empty"
+        }
+        return check
     }
 }

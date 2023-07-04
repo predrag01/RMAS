@@ -9,8 +9,9 @@ data class Device(
     var type: String="",
     var description: String="",
     var ownerId: String="",
-    var comments: List<Comment>,
-    var location: LatLng= LatLng(0.0,0.0),
+    var comments: List<Comment> = emptyList(),
+    var latitude: Double=0.0,
+    var longitude: Double=0.0,
     var like: Int=0,
     var dislike: Int=0,
 )
