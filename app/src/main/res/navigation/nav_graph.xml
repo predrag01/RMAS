@@ -61,8 +61,8 @@
             android:id="@+id/action_homeFragment_to_deviceDetailsFragment"
             app:destination="@id/deviceDetailsFragment" />
         <action
-            android:id="@+id/action_homeFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            android:id="@+id/action_homeFragment_to_rangListFragment"
+            app:destination="@id/rangListFragment" />
     </fragment>
     <fragment
         android:id="@+id/addDeviceFragment"
@@ -72,6 +72,9 @@
         <action
             android:id="@+id/action_addDeviceFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_addDeviceFragment_to_deviceDetailsFragment"
+            app:destination="@id/deviceDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/deviceDetailsFragment"
@@ -81,21 +84,9 @@
         <action
             android:id="@+id/action_deviceDetailsFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/profileFragment"
-        android:name="elfak.mosis.underradar.fragments.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" >
         <action
-            android:id="@+id/action_profileFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-        <action
-            android:id="@+id/action_profileFragment_to_myDevicesListFragment"
-            app:destination="@id/myDevicesListFragment" />
-        <action
-            android:id="@+id/action_profileFragment_to_rangListFragment"
-            app:destination="@id/rangListFragment" />
+            android:id="@+id/action_deviceDetailsFragment_to_addDeviceFragment"
+            app:destination="@id/addDeviceFragment" />
     </fragment>
     <fragment
         android:id="@+id/myDevicesListFragment"
@@ -103,8 +94,8 @@
         android:label="fragment_my_devices_list"
         tools:layout="@layout/fragment_my_devices_list" >
         <action
-            android:id="@+id/action_myDevicesListFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            android:id="@+id/action_myDevicesListFragment_to_rangListFragment"
+            app:destination="@id/rangListFragment" />
     </fragment>
     <fragment
         android:id="@+id/rangListFragment"
@@ -112,7 +103,10 @@
         android:label="fragment_rang_list"
         tools:layout="@layout/fragment_rang_list" >
         <action
-            android:id="@+id/action_rangListFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            android:id="@+id/action_rangListFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_rangListFragment_to_myDevicesListFragment"
+            app:destination="@id/myDevicesListFragment" />
     </fragment>
 </navigation>

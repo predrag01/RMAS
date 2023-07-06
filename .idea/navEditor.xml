@@ -55,12 +55,17 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="224" />
-                            <option name="y" value="317" />
+                            <option name="x" value="-11" />
+                            <option name="y" value="-476" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_addDeviceFragment_to_deviceDetailsFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_addDeviceFragment_to_homeFragment">
                               <value>
                                 <LayoutPositions />
@@ -76,12 +81,17 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="319" />
-                            <option name="y" value="-467" />
+                            <option name="x" value="528" />
+                            <option name="y" value="-481" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_deviceDetailsFragment_to_addDeviceFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_deviceDetailsFragment_to_homeFragment">
                               <value>
                                 <LayoutPositions />
@@ -97,8 +107,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="118" />
-                            <option name="y" value="-73" />
+                            <option name="x" value="168" />
+                            <option name="y" value="37" />
                           </Point>
                         </option>
                         <option name="myPositions">
@@ -113,7 +123,7 @@
                                 <LayoutPositions />
                               </value>
                             </entry>
-                            <entry key="action_homeFragment_to_profileFragment">
+                            <entry key="action_homeFragment_to_rangListFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -154,44 +164,13 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="950" />
-                            <option name="y" value="-302" />
+                            <option name="x" value="1073" />
+                            <option name="y" value="11" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_myDevicesListFragment_to_profileFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                          </map>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="profileFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="647" />
-                            <option name="y" value="-109" />
-                          </Point>
-                        </option>
-                        <option name="myPositions">
-                          <map>
-                            <entry key="action_profileFragment_to_homeFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                            <entry key="action_profileFragment_to_myDevicesListFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                            <entry key="action_profileFragment_to_rangListFragment">
+                            <entry key="action_myDevicesListFragment_to_rangListFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -206,13 +185,18 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="946" />
-                            <option name="y" value="206" />
+                            <option name="x" value="650" />
+                            <option name="y" value="106" />
                           </Point>
                         </option>
                         <option name="myPositions">
                           <map>
-                            <entry key="action_rangListFragment_to_profileFragment">
+                            <entry key="action_rangListFragment_to_homeFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_rangListFragment_to_myDevicesListFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

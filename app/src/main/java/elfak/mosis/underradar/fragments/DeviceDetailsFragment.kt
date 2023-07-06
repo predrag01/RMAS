@@ -1,60 +1,71 @@
 package elfak.mosis.underradar.fragments
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import elfak.mosis.underradar.R
+import android.view.inputmethod.InputMethodManager
+import androidx.fragment.app.activityViewModels
+import elfak.mosis.underradar.databinding.FragmentDeviceDetailsBinding
+import elfak.mosis.underradar.viewmodels.CommentViewModel
+import elfak.mosis.underradar.viewmodels.DeviceViewModel
+import elfak.mosis.underradar.viewmodels.UserViewModel
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [DeviceDetailsFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class DeviceDetailsFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private var _binding: FragmentDeviceDetailsBinding?=null
+    private val userViewModel: UserViewModel by activityViewModels()
+    private val deviceViewModel: DeviceViewModel by activityViewModels()
+    private val commentViewModel: CommentViewModel by activityViewModels()
+    private var bottomSheetDialogFragment: CommentFragment? =null
+    private val binding get()=_binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_device_details, container, false)
+        _binding=FragmentDeviceDetailsBinding.inflate(inflater, container, false)
+        commentViewModel.getCommentsForDevice(deviceViewModel.device!!.id)
+        bottomSheetDialogFragment=CommentFragment()
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DeviceDetailsFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            DeviceDetailsFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.username.text= userViewModel.user!!.userName
+        binding.deviceTitle.text=deviceViewModel.device!!.title
+        binding.deviceDescription.text=deviceViewModel.device!!.description
+        binding.deviceLikes.text=deviceViewModel.device!!.like.toString()
+        binding.deviceDislikes.text=deviceViewModel.device!!.dislike.toString()
+
+        binding.deviceButtonLike.setOnClickListener {
+            deviceViewModel.like(userViewModel.user!!)
+            binding.deviceLikes.text=deviceViewModel.device!!.like.toString()
+        }
+
+        binding.deviceButtonDislike.setOnClickListener {
+            deviceViewModel.dislike(userViewModel.user!!)
+            binding.deviceDislikes.text=deviceViewModel.device!!.dislike.toString()
+        }
+
+        binding.deviceButtonAddComment.setOnClickListener {
+            if(binding.deviceDetailsEditTextComment.text.isNotBlank())
+            {
+                commentViewModel.addComment(binding.deviceDetailsEditTextComment.text.toString(),
+                    deviceViewModel.device!!.id, userViewModel.user!!)
+                (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)as InputMethodManager)
+                    .hideSoftInputFromWindow(view.windowToken, 0)
+                binding.deviceDetailsEditTextComment.text.clear()
             }
+        }
+
+        binding.deviceButtonComment.setOnClickListener {
+            bottomSheetDialogFragment!!.show(childFragmentManager, "BottomSheetDialog")
+        }
     }
+
 }

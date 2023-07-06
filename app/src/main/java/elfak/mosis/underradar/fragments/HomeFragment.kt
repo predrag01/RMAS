@@ -47,7 +47,6 @@ class HomeFragment : Fragment() {
     private lateinit var database: DatabaseReference
     private val devicesMap: MutableMap<Marker?, Device> = mutableMapOf()
     private val binding get()=_binding!!
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -55,10 +54,9 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding=FragmentHomeBinding.inflate(inflater, container, false)
         database=Firebase.database.reference
+        deviceViewModel.device=null
         return binding.root
     }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -118,7 +116,8 @@ class HomeFragment : Fragment() {
         }
 
         binding.profButton.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.action_homeFragment_to_rangListFragment)
+
         }
     }
 

@@ -2,16 +2,19 @@ package elfak.mosis.underradar.viewmodels
 
 import android.content.ContentValues
 import android.content.ContentValues.TAG
+import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import elfak.mosis.underradar.data.Comment
 import elfak.mosis.underradar.data.Device
 import elfak.mosis.underradar.data.User
 
@@ -46,7 +49,6 @@ class DeviceViewModel : ViewModel() {
                         d?.let {
                             deviceList.add(d)
                         }
-                        d?.let { Log.w(TAG, d.title) }
                     }
                     _devices.postValue(deviceList)
                 }
@@ -57,4 +59,19 @@ class DeviceViewModel : ViewModel() {
             }
         })
     }
+
+    fun like(user:User)
+    {
+        device!!.like=device!!.like+1
+        database.child("Devices").child(device!!.id).child("like").setValue(device!!.like)
+        database.child("Users").child(user.id).child("points").setValue(user.points+10)
+    }
+
+    fun dislike(user:User)
+    {
+        device!!.dislike=device!!.dislike+1
+        database.child("Devices").child(device!!.id).child("dislike").setValue(device!!.dislike)
+        database.child("Users").child(user.id).child("points").setValue(user.points+10)
+    }
+
 }
