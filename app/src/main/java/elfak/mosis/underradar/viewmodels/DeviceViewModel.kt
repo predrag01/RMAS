@@ -24,6 +24,7 @@ class DeviceViewModel : ViewModel() {
 
     private val _device=MutableLiveData<Device?>(null)
     private val _devices=MutableLiveData<List<Device>>(emptyList())
+    private val _currentUserDevices=MutableLiveData<List<Device>>(emptyList())
     var device
         get() = _device.value
         set(value) { _device.value=value}
@@ -31,6 +32,10 @@ class DeviceViewModel : ViewModel() {
     var devices
         get()=_devices.value
         set(va){_devices.value=va}
+
+    var currentUserDevices
+        get()=_currentUserDevices.value
+        set(va){_currentUserDevices.value=va}
     fun addDevice(device: Device, user: User)
     {
         database.child("Devices").child(device.id).setValue(device)
@@ -74,4 +79,28 @@ class DeviceViewModel : ViewModel() {
         database.child("Users").child(user.id).child("points").setValue(user.points+10)
     }
 
+    fun getUserDevices(userId: String, onDataLoaded: () ->Unit)
+    {
+        database.child("Devices").orderByChild("ownerId").equalTo(userId)
+            .addListenerForSingleValueEvent(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists())
+                    {
+                        val devicesList= mutableListOf<Device>()
+                        for(device in snapshot.children)
+                        {
+                            val dev=device.getValue(Device::class.java)
+                            dev?.let { devicesList.add(it) }
+                        }
+                        currentUserDevices=devicesList
+                        onDataLoaded()
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    println("Failed to load comments: ${error.message}")
+                }
+
+            })
+    }
 }

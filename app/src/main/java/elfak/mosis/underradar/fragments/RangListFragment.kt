@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
+import elfak.mosis.underradar.R
 import elfak.mosis.underradar.adapters.UserAdapter
 import elfak.mosis.underradar.databinding.FragmentRangListBinding
 import elfak.mosis.underradar.viewmodels.UserViewModel
@@ -42,7 +44,9 @@ class RangListFragment : Fragment() {
         binding.tvCurrentEmailValue.text=userViewModel.user!!.email
         binding.tvCurrentPhoneValue.text=userViewModel.user!!.phoneNumber
         binding.tvCurrentPointsValue.text=userViewModel.user!!.points.toString()
-
+        binding.rangListMyDevices.setOnClickListener {
+            findNavController().navigate(R.id.action_rangListFragment_to_myDevicesListFragment)
+        }
 
     }
 
