@@ -94,12 +94,13 @@ class HomeFragment : Fragment() {
 
                     mMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 900, null)
 
+                    setUpMarkers(mMap)
                 }
             }.addOnFailureListener{
                 Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
             }
 
-            setUpMarkers(mMap)
+
         }
 
         binding.addButton.setOnClickListener{
@@ -117,23 +118,38 @@ class HomeFragment : Fragment() {
 
         binding.profButton.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_rangListFragment)
+        }
 
+        binding.filterButton.setOnClickListener {
+            val filterDialog= FilterFragment()
+            filterDialog.show(requireActivity().supportFragmentManager, "showFilterDialog")
         }
     }
 
+    /*override fun onResume() {
+        super.onResume()
+
+        val filterFragment = childFragmentManager.findFragmentByTag("showFilterDialog") as? FilterFragment
+        filterFragment?.dialog?.setOnDismissListener {
+
+        }
+    }*/
+
     private fun setUpMarkers(map: GoogleMap)
     {
-        /*deviceViewModel.getDevices()
-        if(deviceViewModel.devices!=null)
-        {
-            Toast.makeText(context, "Nije null!!", Toast.LENGTH_SHORT).show()
-            for(device in deviceViewModel.devices!!)
+        deviceViewModel.getDevices(location = LatLng(lastLocation.latitude, lastLocation.longitude)){
+            if(deviceViewModel.devices!=null)
             {
-                map.addMarker(MarkerOptions().position(LatLng(device.latitude, device.longitude)).title(device.type))
+                for(device in deviceViewModel.devices!!)
+                {
+                    val marker=map.addMarker(MarkerOptions().position(LatLng(device.latitude, device.longitude)).title(device.type))
+                    devicesMap[marker] = device
+                }
             }
-        }*/
+        }
 
-        database.child("Devices").addValueEventListener(object: ValueEventListener {
+
+        /*database.child("Devices").addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if(snapshot.exists())
                 {
@@ -154,7 +170,7 @@ class HomeFragment : Fragment() {
             override fun onCancelled(error: DatabaseError) {
                 Log.w(ContentValues.TAG, "Failed to read value.", error.toException());
             }
-        })
+        })*/
 
 
         map.setOnMarkerClickListener { marker ->

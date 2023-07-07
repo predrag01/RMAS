@@ -3,10 +3,12 @@ package elfak.mosis.underradar.viewmodels
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.text.BoringLayout
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -17,6 +19,10 @@ import com.google.firebase.ktx.Firebase
 import elfak.mosis.underradar.data.Comment
 import elfak.mosis.underradar.data.Device
 import elfak.mosis.underradar.data.User
+import java.lang.Math.atan2
+import java.lang.Math.cos
+import java.lang.Math.sin
+import java.lang.Math.sqrt
 
 class DeviceViewModel : ViewModel() {
 
@@ -41,8 +47,23 @@ class DeviceViewModel : ViewModel() {
         database.child("Devices").child(device.id).setValue(device)
         database.child("Users").child(device.ownerId).child("points").setValue(user.points+10)
     }
+    private fun getDistance(currentLat: Double, currentLon: Double, deviceLat: Double, deviceLon: Double): Double {
+        val earthRadius = 6371000.0 // Earth's radius in meters
 
-    fun getDevices()
+        val currentLatRad = Math.toRadians(currentLat)
+        val deviceLatRad = Math.toRadians(deviceLat)
+        val deltaLat = Math.toRadians(deviceLat - currentLat)
+        val deltaLon = Math.toRadians(deviceLon - currentLon)
+
+        val a = sin(deltaLat / 2) * sin(deltaLat / 2) +
+                cos(currentLatRad) * cos(deviceLatRad) *
+                sin(deltaLon / 2) * sin(deltaLon / 2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+        return earthRadius * c
+    }
+    fun getDevices(location: LatLng, radius: Int=20, all: Boolean=true, camera: Boolean=false, radar: Boolean=false,
+                   onDataLoaded: () -> Unit)
     {
         database.child("Devices").addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -51,11 +72,33 @@ class DeviceViewModel : ViewModel() {
                     val deviceList= mutableListOf<Device>()
                     for(dev in snapshot.children){
                         val d=dev.getValue(Device::class.java)
-                        d?.let {
-                            deviceList.add(d)
+                        d?.let{
+                            val distance=getDistance(location.latitude, location.longitude, d.latitude, d.longitude)
+                            if(distance<=radius)
+                            {
+                                if(all)
+                                {
+                                    deviceList.add(d)
+                                }
+                                else if(camera)
+                                {
+                                    if(d?.type=="camera")
+                                    {
+                                        deviceList.add(d)
+                                    }
+                                }
+                                else
+                                {
+                                    if(d?.type=="radar")
+                                    {
+                                        deviceList.add(d)
+                                    }
+                                }
+                            }
+                            }
                         }
-                    }
-                    _devices.postValue(deviceList)
+                    devices=deviceList
+                    onDataLoaded()
                 }
             }
 
