@@ -17,9 +17,46 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="5sp"
-        android:layout_margin="10sp"
+        android:layout_margin="13dp"
         android:gravity="center">
 
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            app:cardCornerRadius="80dp"
+            android:layout_marginBottom="15dp"
+            app:strokeWidth="3sp"
+            android:layout_gravity="center_horizontal"
+            android:backgroundTintMode="src_in">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/register_imageView_profile_photo"
+                    android:contentDescription="User profile photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:translationZ="2sp"
+                    android:outlineProvider="bounds"/>
+
+
+                <Button
+                    android:id="@+id/register_button_add_image"
+                    android:layout_width="48sp"
+                    android:layout_height="48sp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_add_image"
+                    android:clickable="false"
+                    android:translationZ="1sp" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
 
         <LinearLayout
@@ -40,7 +77,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTintMode="add"
-                    android:hint="@string/username_label"
                     android:inputType="text"
                     tools:ignore="TouchTargetSizeCheck"
                     android:autofillHints="" />
@@ -60,7 +96,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTintMode="add"
-                    android:hint="@string/name_label"
                     android:inputType="textPersonName"
                     tools:ignore="TouchTargetSizeCheck" />
 
@@ -79,7 +114,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTintMode="add"
-                    android:hint="@string/lastname_label"
                     android:inputType="textPersonName"
                     tools:ignore="TouchTargetSizeCheck" />
 
@@ -98,7 +132,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTintMode="add"
-                    android:hint="@string/phone_number_label"
                     android:inputType="phone"
                     tools:ignore="TouchTargetSizeCheck" />
 
@@ -117,7 +150,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTintMode="add"
-                    android:hint="@string/email_label"
                     android:inputType="textEmailAddress"
                     tools:ignore="TouchTargetSizeCheck" />
 
@@ -137,7 +169,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTintMode="add"
-                    android:hint="@string/password_label"
                     android:inputType="textPassword"
                     tools:ignore="TouchTargetSizeCheck" />
 
@@ -157,7 +188,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTintMode="add"
-                    android:hint="@string/Confirmpassword_label"
                     android:inputType="textPassword"
                     tools:ignore="TouchTargetSizeCheck" />
 
@@ -185,7 +215,7 @@
                 android:text="@string/already_have_an_account_label"
                 android:textColor="@color/black"
                 android:background="@android:color/transparent"
-                android:textSize="10sp"/>
+                android:textSize="15sp"/>
 
         </LinearLayout>
 

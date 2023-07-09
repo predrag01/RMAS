@@ -11,5 +11,6 @@ data class User(
     var email:String="",
     var phoneNumber: String="",
     var rang: Int=0,
-    var points: Int=0
+    var points: Int=0,
+    var imageURL: String=""
 )
