@@ -8,4 +8,5 @@ data class Comment(
     var deviceId: String="",
     var username: String="",
     var comment: String="",
+    var profileImg: String="",
 )

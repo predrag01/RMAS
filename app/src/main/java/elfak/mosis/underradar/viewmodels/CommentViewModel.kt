@@ -29,7 +29,8 @@ class CommentViewModel : ViewModel() {
 
     fun addComment(comm: String, dev: String, user: User)
     {
-        var comment: Comment=Comment(ownerId = user.id, deviceId = dev, comment = comm, username = user.userName)
+        var comment: Comment=Comment(ownerId = user.id, deviceId = dev, comment = comm,
+            username = user.userName, profileImg = user.imageURL)
         database.child("Comments").child(comment.id).setValue(comment)
         database.child("Users").child(user.id).child("points").setValue(user.points+10)
     }

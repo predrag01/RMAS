@@ -2,6 +2,7 @@ package elfak.mosis.underradar.viewmodels
 
 import android.content.ContentValues
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
@@ -15,6 +16,7 @@ import elfak.mosis.underradar.data.User
 
 class UserViewModel : ViewModel() {
     private val _user=MutableLiveData<User?>(null)
+    private val _owner=MutableLiveData<User?>(null)
     private val _users= MutableLiveData<List<User>>(emptyList())
     private val _location=MutableLiveData<LatLng?>(null)
     private val database=Firebase.database.reference
@@ -23,6 +25,10 @@ class UserViewModel : ViewModel() {
     var user
         get()=_user.value
         set(value){_user.value=value}
+
+    var owner
+        get()=_owner.value
+        set(value){_owner.value=value}
 
     fun getMutableLocation()=_location
 
@@ -49,6 +55,19 @@ class UserViewModel : ViewModel() {
 
                     onDataLoaded()
                 }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(ContentValues.TAG, "Failed to read value.", error.toException());
+            }
+        })
+    }
+
+    fun getOwner(ownerId:String)
+    {
+        database.child("Users").child(ownerId).addValueEventListener(object: ValueEventListener{
+            override fun onDataChange(snapshot: DataSnapshot) {
+                owner=snapshot.getValue(User::class.java)
             }
 
             override fun onCancelled(error: DatabaseError) {

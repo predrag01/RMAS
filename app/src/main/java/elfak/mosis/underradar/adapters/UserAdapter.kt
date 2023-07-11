@@ -4,9 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import elfak.mosis.underradar.R
 import elfak.mosis.underradar.data.Comment
 import elfak.mosis.underradar.data.User
@@ -30,6 +32,12 @@ class UserAdapter(internal var context: Context,
         holder.txt_rang_list_last_name!!.text=users.get(position).lastName
         holder.txt_rang_list_point_value!!.text= users.get(position).points.toString()
         holder.txt_rang_list_no!!.text= (position+1).toString()
+        if(users.get(position).imageURL!=null)
+        {
+            Glide.with(context)
+                .load(users.get(position).imageURL)
+                .into(holder.rang_list_profile_image_view!!)
+        }
 
     }
 
@@ -40,6 +48,7 @@ class UserAdapter(internal var context: Context,
         var txt_rang_list_last_name: TextView?=null
         var txt_rang_list_point_value: TextView?=null
         var txt_rang_list_no: TextView?=null
+        var rang_list_profile_image_view: ImageView?=null
 
         init {
             txt_rang_list_username=itemView.findViewById(R.id.txt_rang_list_username) as TextView
@@ -47,6 +56,7 @@ class UserAdapter(internal var context: Context,
             txt_rang_list_last_name=itemView.findViewById(R.id.txt_rang_list_last_name) as TextView
             txt_rang_list_point_value=itemView.findViewById(R.id.txt_rang_list_point_value) as TextView
             txt_rang_list_no=itemView.findViewById(R.id.txt_rang_list_no) as TextView
+            rang_list_profile_image_view=itemView.findViewById(R.id.rang_list_profile_image_view) as ImageView
         }
     }
 }

@@ -15,6 +15,8 @@ import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -111,7 +113,6 @@ class HomeFragment : Fragment() {
                 {
                     lastLocation=location.result
                     userViewModel.location=LatLng(location.result.latitude, location.result.longitude)
-                    Toast.makeText(context, lastLocation.longitude.toString(), Toast.LENGTH_SHORT).show()
                 }
             }
             userViewModel.location=LatLng(lastLocation.latitude, lastLocation.longitude)
@@ -123,6 +124,14 @@ class HomeFragment : Fragment() {
         }
 
         binding.filterButton.setOnClickListener {
+            fusedLocationClient.lastLocation.addOnCompleteListener {location->
+                if(location.result  !=null)
+                {
+                    lastLocation=location.result
+                    userViewModel.location=LatLng(location.result.latitude, location.result.longitude)
+                }
+            }
+            userViewModel.location=LatLng(lastLocation.latitude, lastLocation.longitude)
             val filterDialog= FilterFragment()
             filterDialog.show(requireActivity().supportFragmentManager, "showFilterDialog")
         }
@@ -180,6 +189,7 @@ class HomeFragment : Fragment() {
             if(devicesMap.contains(marker))
             {
                 deviceViewModel.device=devicesMap[marker]
+                userViewModel.getOwner(deviceViewModel.device!!.ownerId)
                 findNavController().navigate(R.id.action_homeFragment_to_deviceDetailsFragment)
             }
             else

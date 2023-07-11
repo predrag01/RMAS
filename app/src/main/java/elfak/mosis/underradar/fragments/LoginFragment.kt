@@ -1,5 +1,6 @@
 package elfak.mosis.underradar.fragments
 
+import android.app.ProgressDialog
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
@@ -31,6 +32,7 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding?=null
     private val userViewModel: UserViewModel by activityViewModels()
     private lateinit var database: DatabaseReference
+    private lateinit var progressDialog: ProgressDialog
 
     private val binding get() = _binding!!
 
@@ -46,6 +48,9 @@ class LoginFragment : Fragment() {
         firebaseAuth=FirebaseAuth.getInstance()
         database=Firebase.database.reference
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        progressDialog= ProgressDialog(requireContext())
+        progressDialog.setMessage("Loading...")
+        progressDialog.setCancelable(false)
         return binding.root
     }
 
@@ -58,6 +63,7 @@ class LoginFragment : Fragment() {
                     .hideSoftInputFromWindow(view.windowToken, 0)
                 if(checkInputs())
                 {
+                    progressDialog.show()
                     var email=binding.loginEditTextEmail.text.toString()
                     var password=binding.loginEditTextPassword.text.toString()
 
@@ -69,11 +75,14 @@ class LoginFragment : Fragment() {
                             }
 
                             override fun onCancelled(error: DatabaseError) {
+                                progressDialog.dismiss()
                                 Log.w(TAG, "Failed to read value.", error.toException());
                             }
                         })
+                        progressDialog.dismiss()
                         findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
                     }.addOnFailureListener {
+                        progressDialog.dismiss()
                         Toast.makeText(context, it.message.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }

@@ -1,65 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragments.FilterFragment">
+    tools:context=".fragments.FilterFragment"
+    app:cardCornerRadius="25dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_margin="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="5dp"
+            android:text="@string/filter"/>
 
         <CheckBox
             android:id="@+id/filterAllCheckbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="All"
+            android:text="@string/all"
+            android:textColor="@color/black"
             android:checked="true"/>
 
         <CheckBox
             android:id="@+id/filterCameraCheckbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Camera"/>
+            app:cardCornerRadius="2dp"
+            android:text="@string/camera"
+            android:textColor="@color/black"/>
 
         <CheckBox
             android:id="@+id/filterRadarCheckbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Radar"/>
+            app:cardCornerRadius="2dp"
+            android:text="@string/radar"
+            android:textColor="@color/black"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:layout_marginTop="10dp">
 
             <TextView
-                android:id="@+id/radius"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:text="Radius:"/>
+                android:text="@string/select_radius"
+                android:textColor="@color/black"
+                android:textSize="17dp"/>
 
-            <EditText
-                android:id="@+id/filterEditTextRadius"
-                android:layout_width="wrap_content"
+            <com.google.android.material.slider.Slider
+                android:id="@+id/slider"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:backgroundTintMode="add"
-                android:inputType="number" />
+                android:valueFrom="0"
+                android:valueTo="100"
+                android:value="10" />
+
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/filterButtonSet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:layout_marginStart="8dp"
-            android:text="Set"
-            android:textSize="20sp"
-            android:layout_gravity="end"/>
     </LinearLayout>
-</FrameLayout>
+</androidx.cardview.widget.CardView>

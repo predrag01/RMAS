@@ -14,4 +14,5 @@ data class Device(
     var longitude: Double=0.0,
     var like: Int=0,
     var dislike: Int=0,
+    var imageURL: String=""
 )

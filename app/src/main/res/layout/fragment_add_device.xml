@@ -3,11 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10sp"
+    android:layout_height="wrap_content"
+    android:padding="5sp"
     android:orientation="vertical"
-    android:layout_margin="10sp"
-    android:layout_gravity="center"
+    android:layout_margin="5sp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.AddDeviceFragment">
 
@@ -16,8 +15,43 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="5sp"
-        android:layout_margin="10sp"
-        android:gravity="center">
+        android:layout_margin="5sp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="200dp"
+            app:cardCornerRadius="10dp"
+            android:layout_marginBottom="15dp"
+            app:strokeWidth="3sp"
+            android:layout_gravity="center_horizontal"
+            android:backgroundTintMode="src_in">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/add_device_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop"
+                    android:translationZ="2sp"
+                    android:outlineProvider="bounds"/>
+
+
+                <Button
+                    android:id="@+id/add_device_button_add_image"
+                    android:layout_width="48sp"
+                    android:layout_height="48sp"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/ic_add_image"
+                    android:clickable="false"
+                    android:translationZ="1sp" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -63,6 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="@string/prompt_message"
+                app:boxCornerRadiusBottomEnd="10dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <Spinner
@@ -70,39 +105,40 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:entries="@array/add_device_dropdown_options"
-                    android:prompt="@string/prompt_message" />
+                    android:prompt="@string/prompt_message"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="130dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="14dp"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom">
+
+        <Button
+            android:id="@+id/add_device_add"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal">
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="@string/add_device"
+            android:textSize="20sp" />
 
-            <Button
-                android:id="@+id/add_device_add"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="8dp"
-                android:text="@string/add_device"
-                android:textSize="20sp" />
-
-            <Button
-                android:id="@+id/add_device_cancle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="8dp"
-                android:text="@string/cancle_device"
-                android:textSize="20sp"/>
-
-        </LinearLayout>
+        <Button
+            android:id="@+id/add_device_cancle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:text="@string/cancel_device"
+            android:textSize="20sp"/>
 
     </LinearLayout>
 

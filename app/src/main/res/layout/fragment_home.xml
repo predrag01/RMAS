@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.HomeFragment">
 
     <fragment
@@ -12,41 +13,82 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_button"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="40dp"
-        android:layout_marginRight="60dp"
-        android:layout_gravity="bottom|end"
-        android:text="Add"
-        android:textColor="@color/black"/>
+    <RelativeLayout
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_gravity="bottom|start">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/add_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            app:borderWidth="0dp"
+            app:elevation="0dp"
+            app:backgroundTint="#80FFFFFF"
+            app:maxImageSize="48dp"
+            style="@style/CustomFloatingActionButton" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/prof_button"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_add_location" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginTop="70dp"
         android:layout_marginRight="10dp"
-        android:layout_gravity="top|end"
-        android:text="Profile"
-        android:textColor="@color/black"/>
+        android:layout_gravity="top|end">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/filter_button"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="130dp"
-        android:layout_marginRight="10dp"
-        android:layout_gravity="top|end"
-        android:text="Filters"
-        android:textColor="@color/black"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/prof_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            app:borderWidth="0dp"
+            app:elevation="0dp"
+            app:backgroundTint="#80FFFFFF"
+            app:maxImageSize="80dp"
+            style="@style/CustomFloatingActionButton" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_profile"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="15dp"
+        android:layout_gravity="top|start">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/filter_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            app:borderWidth="0dp"
+            app:elevation="0dp"
+            app:backgroundTint="@color/white"
+            app:maxImageSize="80dp"
+            style="@style/CustomFloatingActionButton" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_filter"/>
+
+    </RelativeLayout>
 
 </FrameLayout>

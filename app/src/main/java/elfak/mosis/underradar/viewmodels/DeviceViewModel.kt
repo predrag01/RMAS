@@ -3,6 +3,7 @@ package elfak.mosis.underradar.viewmodels
 import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.net.Uri
 import android.text.BoringLayout
 import android.util.Log
 import android.widget.Toast
@@ -16,6 +17,8 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import elfak.mosis.underradar.data.Comment
 import elfak.mosis.underradar.data.Device
 import elfak.mosis.underradar.data.User
@@ -23,10 +26,13 @@ import java.lang.Math.atan2
 import java.lang.Math.cos
 import java.lang.Math.sin
 import java.lang.Math.sqrt
+import java.net.URI
+import java.util.UUID
 
 class DeviceViewModel : ViewModel() {
 
     private val database= Firebase.database.reference
+    private val storageRef = FirebaseStorage.getInstance().reference
 
     private val _device=MutableLiveData<Device?>(null)
     private val _devices=MutableLiveData<List<Device>>(emptyList())
@@ -42,9 +48,18 @@ class DeviceViewModel : ViewModel() {
     var currentUserDevices
         get()=_currentUserDevices.value
         set(va){_currentUserDevices.value=va}
-    fun addDevice(device: Device, user: User)
+    fun addDevice(device: Device, user: User, imgURI: Uri?=null)
     {
-        database.child("Devices").child(device.id).setValue(device)
+        if(imgURI!=null)
+        {
+            val uuid= UUID.randomUUID().toString()+".jpg"
+            storageRef.child("Device photo").child(uuid).putFile(imgURI).addOnSuccessListener{
+                storageRef.child("Device photo").child(uuid).downloadUrl.addOnSuccessListener { uri->
+                    device.imageURL=uri.toString()
+                    database.child("Devices").child(device.id).setValue(device)
+                }
+            }
+        }
         database.child("Users").child(device.ownerId).child("points").setValue(user.points+10)
     }
     private fun getDistance(currentLat: Double, currentLon: Double, deviceLat: Double, deviceLon: Double): Double {
@@ -62,7 +77,7 @@ class DeviceViewModel : ViewModel() {
 
         return earthRadius * c
     }
-    fun getDevices(location: LatLng, radius: Int=20, all: Boolean=true, camera: Boolean=false, radar: Boolean=false,
+    fun getDevices(location: LatLng, radius: Int=10000, all: Boolean=true, camera: Boolean=false, radar: Boolean=false,
                    onDataLoaded: () -> Unit)
     {
         database.child("Devices").addValueEventListener(object: ValueEventListener {
@@ -82,14 +97,14 @@ class DeviceViewModel : ViewModel() {
                                 }
                                 else if(camera)
                                 {
-                                    if(d?.type=="camera")
+                                    if(d?.type=="Camera")
                                     {
                                         deviceList.add(d)
                                     }
                                 }
                                 else
                                 {
-                                    if(d?.type=="radar")
+                                    if(d?.type=="Radar")
                                     {
                                         deviceList.add(d)
                                     }

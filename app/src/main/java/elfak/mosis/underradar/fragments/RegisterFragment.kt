@@ -2,6 +2,7 @@ package elfak.mosis.underradar.fragments
 
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -28,13 +29,14 @@ import elfak.mosis.underradar.R
 import elfak.mosis.underradar.data.User
 import elfak.mosis.underradar.databinding.FragmentRegisterBinding
 import elfak.mosis.underradar.viewmodels.UserViewModel
+import java.util.UUID
 import android.content.Intent as Intent
 
 
 class RegisterFragment : Fragment() {
 
     private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var progressDialog : AlertDialog
+    private lateinit var progressDialog : ProgressDialog
     private var _binding: FragmentRegisterBinding?=null
     private  lateinit var database: DatabaseReference
     private val userViewModel: UserViewModel by activityViewModels()
@@ -57,6 +59,9 @@ class RegisterFragment : Fragment() {
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
         database= Firebase.database.reference
         storageRef=FirebaseStorage.getInstance().reference
+        progressDialog= ProgressDialog(requireContext())
+        progressDialog.setMessage("Loading...")
+        progressDialog.setCancelable(false)
         return binding.root
     }
 
@@ -67,7 +72,6 @@ class RegisterFragment : Fragment() {
             (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager)
                 .hideSoftInputFromWindow(view.windowToken, 0)
             if(checkInputs()){
-
                 var user: User = User(
                     name=binding.registerEditTextName.text.toString(),
                     lastName=binding.registerEditTextLastname.text.toString(),
@@ -75,7 +79,7 @@ class RegisterFragment : Fragment() {
                     phoneNumber = binding.registerEditTextPhoneNumber.text.toString(),
                     email = binding.registerEditTextEmail.text.toString(),
                 )
-
+                progressDialog.show()
                 createAccount(user, binding.registerEditTextPassword.text.toString())
             }
         }
@@ -120,36 +124,36 @@ class RegisterFragment : Fragment() {
         var lastname=binding.registerEditTextLastname.text
         if(lastname.isBlank())
         {
-            binding.textInputLastName.error="Required"
             check= false
+            progressDialog.dismiss()
         }
 
         var username=binding.registerEditTextUsername.text
         if(username.isBlank())
         {
-            binding.textInputUsername.error="Required"
             check= false
+            progressDialog.dismiss()
         }
 
         var email=binding.registerEditTextEmail.text
         if(email.isBlank())
         {
-            binding.textInputEmail.error="Required"
             check= false
+            progressDialog.dismiss()
         }
 
         var password=binding.registerEditTextPassword.text
         if(password.isBlank())
         {
-            binding.textInputPassword.error="Required"
             check= false
+            progressDialog.dismiss()
         }
 
         var confirmPassword=binding.registerEditTextConfirmpassword.text
         if(confirmPassword.isBlank())
         {
-            binding.textInputConfirmpassword.error="Required"
             check= false
+            progressDialog.dismiss()
         }
 
         if(password.toString()!=confirmPassword.toString())
@@ -187,23 +191,24 @@ class RegisterFragment : Fragment() {
                 user.id=it.user!!.uid
                 if(imageURI!==null)
                 {
-                    storageRef.child("test.jpg").putFile(imageURI!!).addOnSuccessListener {
-
-                        //Toast.makeText(context, "Postavljeno", Toast.LENGTH_SHORT).show()
-
-                        storageRef.child("test.jpg").downloadUrl.addOnSuccessListener {uri->
+                    val uuid=UUID.randomUUID().toString()+".jpg"
+                    storageRef.child(uuid).putFile(imageURI!!).addOnSuccessListener {
+                        storageRef.child(uuid).downloadUrl.addOnSuccessListener {uri->
                             user.imageURL=uri.toString()
                             database.child("Users").child(user.id).setValue(user).addOnSuccessListener {
                                 userViewModel.user=user
+                                progressDialog.dismiss()
                                 findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
                             }.addOnFailureListener {
+                                progressDialog.dismiss()
                                 Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
                             }
-
                             }.addOnFailureListener{
+                            progressDialog.dismiss()
                             Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
                         }
                         }.addOnFailureListener{
+                        progressDialog.dismiss()
                         Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -211,15 +216,17 @@ class RegisterFragment : Fragment() {
                 {
                     database.child("Users").child(user.id).setValue(user).addOnSuccessListener {
                         userViewModel.user=user
+                        progressDialog.dismiss()
                         findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
                     }.addOnFailureListener {
+                        progressDialog.dismiss()
                         Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
             .addOnFailureListener{
+                progressDialog.dismiss()
                 Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
             }
-        //database.child("Users").child(user.id).setValue(user)
     }
 }
