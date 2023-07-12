@@ -22,12 +22,15 @@ class UserViewModel : ViewModel() {
         get()=_owner.value
         set(value){_owner.value=value}
 
-    fun getOwner(ownerId:String)
+    fun getOwner(ownerId:String, onSuccess: () -> Unit)
     {
         database.child("Users").child(ownerId).addValueEventListener(object: ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
-
-                owner=snapshot.getValue(User::class.java)
+                if(owner==null)
+                {
+                    owner=snapshot.getValue(User::class.java)
+                    onSuccess()
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {

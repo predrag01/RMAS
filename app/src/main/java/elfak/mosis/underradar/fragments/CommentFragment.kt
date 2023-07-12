@@ -15,12 +15,13 @@ import elfak.mosis.underradar.adapters.CommentAdapter
 import elfak.mosis.underradar.databinding.FragmentCommentBinding
 import elfak.mosis.underradar.viewmodels.CommentViewModel
 import elfak.mosis.underradar.viewmodels.DeviceViewModel
+import elfak.mosis.underradar.viewmodels.LoggedUserViewModel
 import elfak.mosis.underradar.viewmodels.UserViewModel
 
 class CommentFragment : BottomSheetDialogFragment() {
 
     private lateinit var commentAdapter: CommentAdapter
-    private val userViewModel: UserViewModel by activityViewModels()
+    private val loggedUserViewModel: LoggedUserViewModel by activityViewModels()
     private val deviceViewModel: DeviceViewModel by activityViewModels()
     private val commentViewModel: CommentViewModel by activityViewModels()
     private var _binding: FragmentCommentBinding? =null
@@ -45,14 +46,29 @@ class CommentFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.commentList.adapter=commentAdapter
         binding.deviceButtonAddComment.setOnClickListener {
-            /*if(binding.deviceDetailsEditTextComment.text.isNotBlank())
+            if(binding.deviceDetailsEditTextComment.text.isNotBlank())
             {
                 commentViewModel.addComment(binding.deviceDetailsEditTextComment.text.toString(),
-                    deviceViewModel.device!!.id, userViewModel.user!!)
+                    deviceViewModel.device!!.id, loggedUserViewModel.user!!)
                 (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)as InputMethodManager)
                     .hideSoftInputFromWindow(view.windowToken, 0)
                 binding.deviceDetailsEditTextComment.text.clear()
-            }*/
+            }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        commentViewModel.comments=null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        commentViewModel.comments=null
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        commentViewModel.comments=null
     }
 }

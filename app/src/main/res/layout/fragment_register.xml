@@ -52,7 +52,8 @@
                     android:layout_centerInParent="true"
                     android:background="@drawable/ic_add_image"
                     android:clickable="false"
-                    android:translationZ="1sp" />
+                    android:translationZ="1sp"
+                    android:backgroundTint="@color/electric_blue" />
 
             </RelativeLayout>
 
@@ -70,7 +71,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/username_label"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                android:backgroundTint="@color/electric_blue"
+                style="@style/MyOutlinedBox">
 
                 <EditText
                     android:id="@+id/register_editText_username"
@@ -89,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/name_label"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/MyOutlinedBox">
 
                 <EditText
                     android:id="@+id/register_editText_name"
@@ -107,7 +109,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/lastname_label"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/MyOutlinedBox">
 
                 <EditText
                     android:id="@+id/register_editText_Lastname"
@@ -125,7 +127,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/phone_number_label"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/MyOutlinedBox">
 
                 <EditText
                     android:id="@+id/register_editText_phone_number"
@@ -143,7 +145,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/email_label"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/MyOutlinedBox">
 
                 <EditText
                     android:id="@+id/register_editText_email"
@@ -162,7 +164,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/password_label"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/MyOutlinedBox">
 
                 <EditText
                     android:id="@+id/register_editText_password"
@@ -181,7 +183,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/Confirmpassword_label"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                style="@style/MyOutlinedBox">
 
                 <EditText
                     android:id="@+id/register_editText_Confirmpassword"

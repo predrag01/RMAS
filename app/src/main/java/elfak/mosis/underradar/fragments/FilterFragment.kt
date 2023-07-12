@@ -26,7 +26,7 @@ class FilterFragment : DialogFragment() {
     private  var _binding: FragmentFilterBinding?=null
     private val loggedUserViewModel: LoggedUserViewModel by activityViewModels()
     private val deviceViewModel: DeviceViewModel by activityViewModels()
-    private var radius: Int = 10
+    private var radius: Int = 10000
     private var all:Boolean=true
     private var camera:Boolean=false
     private var radar:Boolean=false
@@ -110,7 +110,7 @@ class FilterFragment : DialogFragment() {
             camera=true
             radar=false
 
-            deviceViewModel.filterLocations(all = this.all, camera = this.camera, radar = this.radar,
+            deviceViewModel.filterLocations(rad=radius, all = this.all, camera = this.camera, radar = this.radar,
                 loc = loggedUserViewModel.location!!)
 
         }
@@ -136,7 +136,7 @@ class FilterFragment : DialogFragment() {
             camera=false
             radar=false
 
-            deviceViewModel.filterLocations(all = this.all, camera = this.camera, radar = this.radar,
+            deviceViewModel.filterLocations(rad=radius, all = this.all, camera = this.camera, radar = this.radar,
                 loc = loggedUserViewModel.location!!)
 
         }
@@ -162,7 +162,7 @@ class FilterFragment : DialogFragment() {
             camera=false
             radar=true
 
-            deviceViewModel.filterLocations(all = this.all, camera = this.camera, radar = this.radar,
+            deviceViewModel.filterLocations(rad=radius, all = this.all, camera = this.camera, radar = this.radar,
                 loc = loggedUserViewModel.location!!)
 
         }

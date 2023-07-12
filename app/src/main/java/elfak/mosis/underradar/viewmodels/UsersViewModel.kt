@@ -31,8 +31,11 @@ class UsersViewModel : ViewModel() {
                         val u=user.getValue(User::class.java)
                         userList.add(u!!)
                     }
-                    users=userList.sortedByDescending { it.points }
-                    onDataLoaded()
+                    if(users==null)
+                    {
+                        users=userList.sortedByDescending { it.points }
+                        onDataLoaded()
+                    }
                 }
             }
 

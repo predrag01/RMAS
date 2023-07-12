@@ -34,4 +34,19 @@ class MyDevicesListFragment : Fragment() {
         }
         return binding.root
     }
+
+    override fun onPause() {
+        super.onPause()
+        devicesViewModel.currentUserDevices=null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        devicesViewModel.currentUserDevices=null
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        devicesViewModel.currentUserDevices=null
+    }
 }

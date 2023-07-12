@@ -3,6 +3,7 @@ package elfak.mosis.underradar.fragments
 import android.Manifest
 import android.content.pm.PackageManager
 import android.location.Location
+import android.location.LocationRequest
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -41,6 +43,7 @@ class HomeFragment : Fragment() {
     private val deviceViewModel: DeviceViewModel by activityViewModels()
     private var devicesMap: MutableMap<Marker?, Device> = mutableMapOf()
     private var map: GoogleMap? =null
+    private lateinit var location: MutableLiveData<Location>
     private val binding get()=_binding!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,6 +59,8 @@ class HomeFragment : Fragment() {
 
         val mapFragment=childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
 
+        location= MutableLiveData()
+
         fusedLocationClient= LocationServices.getFusedLocationProviderClient(requireActivity())
 
         mapFragment!!.getMapAsync{ mMap ->
@@ -68,16 +73,14 @@ class HomeFragment : Fragment() {
 
             if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 1)
+                ActivityCompat.requestPermissions(requireActivity(), arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 1001)
                 return@getMapAsync
             }
             mMap.isMyLocationEnabled=true
 
-
             fusedLocationClient.lastLocation.addOnCompleteListener {location->
                 if(location.result  !=null)
                 {
-                    Toast.makeText(context, "Promena lokacije", Toast.LENGTH_SHORT).show()
                     lastLocation=location.result
                     val currentLatLong= LatLng(location.result.latitude, location.result.longitude)
                     loggedUserViewModel.location=currentLatLong
@@ -109,10 +112,11 @@ class HomeFragment : Fragment() {
                 if(location.result  !=null)
                 {
                     lastLocation=location.result
+                    loggedUserViewModel.location=LatLng(lastLocation.latitude, lastLocation.longitude)
+                    findNavController().navigate(R.id.action_homeFragment_to_addDeviceFragment)
                 }
             }
-            loggedUserViewModel.location=LatLng(lastLocation.latitude, lastLocation.longitude)
-            findNavController().navigate(R.id.action_homeFragment_to_addDeviceFragment)
+
         }
 
         binding.profButton.setOnClickListener {
@@ -160,8 +164,9 @@ class HomeFragment : Fragment() {
             if(devicesMap.contains(marker))
             {
                 deviceViewModel.device=devicesMap[marker]
-                userViewModel.getOwner(deviceViewModel.device!!.ownerId)
-                findNavController().navigate(R.id.action_homeFragment_to_deviceDetailsFragment)
+                userViewModel.getOwner(deviceViewModel.device!!.ownerId, onSuccess = {
+                    findNavController().navigate(R.id.action_homeFragment_to_deviceDetailsFragment)
+                })
             }
             else
             {
@@ -171,4 +176,5 @@ class HomeFragment : Fragment() {
             true
         }
     }
+
 }

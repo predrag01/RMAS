@@ -163,7 +163,8 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginStart="10dp"
-                    android:background="@drawable/ic_comment" />
+                    android:background="@drawable/ic_comment"
+                    android:backgroundTint="@color/black"/>
             </LinearLayout>
 
             <TextView
@@ -174,7 +175,6 @@
                 android:textStyle="italic"/>
 
         </LinearLayout>
-
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

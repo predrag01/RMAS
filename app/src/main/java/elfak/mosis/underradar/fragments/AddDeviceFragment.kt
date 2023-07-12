@@ -86,9 +86,6 @@ class AddDeviceFragment : Fragment() {
             }
         }
 
-        binding.addDeviceCancle.setOnClickListener {
-            findNavController().navigate(R.id.action_addDeviceFragment_to_homeFragment)
-        }
 
         binding.addDeviceImageView.setOnClickListener{
             if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.READ_EXTERNAL_STORAGE)

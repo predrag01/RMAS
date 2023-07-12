@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -30,10 +31,10 @@ class RangListFragment : Fragment() {
         // Inflate the layout for this fragment
 
         _binding= FragmentRangListBinding.inflate(inflater, container, false)
-        usersViewModel.getUsers(){
+        usersViewModel.getUsers(onDataLoaded = {
             userAdapter= UserAdapter(requireContext(), usersViewModel.users!!)
             binding.rangList.adapter=userAdapter
-        }
+        })
         return binding.root
     }
 
@@ -60,5 +61,21 @@ class RangListFragment : Fragment() {
 
     }
 
+    override fun onPause() {
+        super.onPause()
+        usersViewModel.users=null
+        Toast.makeText(context, "onPause", Toast.LENGTH_SHORT).show()
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        usersViewModel.users=null
+        Toast.makeText(context, "onDestroy", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        usersViewModel.users=null
+        Toast.makeText(context, "onDestroyView", Toast.LENGTH_SHORT).show()
+    }
 }

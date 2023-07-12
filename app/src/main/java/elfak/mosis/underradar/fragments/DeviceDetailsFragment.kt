@@ -57,7 +57,7 @@ class DeviceDetailsFragment : Fragment() {
         {
             var profileImage=requireView().findViewById<ImageView>(R.id.device_details_profile_image_view)
             Glide.with(requireContext())
-                .load(deviceViewModel.device!!.imageURL)
+                .load(userViewModel.owner!!.imageURL)
                 .into(profileImage)
         }
 
@@ -83,4 +83,18 @@ class DeviceDetailsFragment : Fragment() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        userViewModel.owner=null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        userViewModel.owner=null
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        userViewModel.owner=null
+    }
 }

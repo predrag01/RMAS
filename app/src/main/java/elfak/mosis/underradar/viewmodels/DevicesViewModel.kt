@@ -32,8 +32,11 @@ class DevicesViewModel: ViewModel() {
                             val dev=device.getValue(Device::class.java)
                             dev?.let { devicesList.add(it) }
                         }
-                        currentUserDevices=devicesList
-                        onDataLoaded()
+                        if(currentUserDevices==null)
+                        {
+                            currentUserDevices=devicesList
+                            onDataLoaded()
+                        }
                     }
                 }
 
