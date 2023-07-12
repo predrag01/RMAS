@@ -25,28 +25,20 @@ import com.google.firebase.ktx.Firebase
 import elfak.mosis.underradar.R
 import elfak.mosis.underradar.data.User
 import elfak.mosis.underradar.databinding.FragmentLoginBinding
+import elfak.mosis.underradar.viewmodels.LoggedUserViewModel
 import elfak.mosis.underradar.viewmodels.UserViewModel
 
 class LoginFragment : Fragment() {
-    private lateinit var firebaseAuth: FirebaseAuth
     private var _binding: FragmentLoginBinding?=null
-    private val userViewModel: UserViewModel by activityViewModels()
-    private lateinit var database: DatabaseReference
     private lateinit var progressDialog: ProgressDialog
-
+    private val loggedUserViewModel: LoggedUserViewModel by activityViewModels()
     private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        firebaseAuth=FirebaseAuth.getInstance()
-        database=Firebase.database.reference
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         progressDialog= ProgressDialog(requireContext())
         progressDialog.setMessage("Loading...")
@@ -61,30 +53,22 @@ class LoginFragment : Fragment() {
             setOnClickListener {
                 (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)as InputMethodManager)
                     .hideSoftInputFromWindow(view.windowToken, 0)
+
                 if(checkInputs())
                 {
                     progressDialog.show()
                     var email=binding.loginEditTextEmail.text.toString()
                     var password=binding.loginEditTextPassword.text.toString()
 
-                    firebaseAuth.signInWithEmailAndPassword(email, password).addOnSuccessListener {
-                        database.child("Users").child(it.user!!.uid).addValueEventListener(object: ValueEventListener{
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                userViewModel.user=snapshot.getValue(User::class.java)
-                                Toast.makeText(context, userViewModel.user!!.name, Toast.LENGTH_SHORT).show()
-                            }
-
-                            override fun onCancelled(error: DatabaseError) {
-                                progressDialog.dismiss()
-                                Log.w(TAG, "Failed to read value.", error.toException());
-                            }
-                        })
-                        progressDialog.dismiss()
+                    loggedUserViewModel.login(email, password,
+                    onSuccess = {
                         findNavController().navigate(R.id.action_loginFragment_to_homeFragment)
-                    }.addOnFailureListener {
                         progressDialog.dismiss()
-                        Toast.makeText(context, it.message.toString(), Toast.LENGTH_SHORT).show()
-                    }
+                        Toast.makeText(context, "Logged as "+ loggedUserViewModel.user!!.userName, Toast.LENGTH_SHORT).show()
+                    },
+                    onFailure = {
+                        progressDialog.dismiss()
+                    })
                 }
             }
         }

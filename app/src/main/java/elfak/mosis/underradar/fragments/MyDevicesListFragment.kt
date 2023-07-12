@@ -10,13 +10,15 @@ import elfak.mosis.underradar.R
 import elfak.mosis.underradar.adapters.DeviceAdapter
 import elfak.mosis.underradar.databinding.FragmentMyDevicesListBinding
 import elfak.mosis.underradar.viewmodels.DeviceViewModel
+import elfak.mosis.underradar.viewmodels.DevicesViewModel
+import elfak.mosis.underradar.viewmodels.LoggedUserViewModel
 import elfak.mosis.underradar.viewmodels.UserViewModel
 
 class MyDevicesListFragment : Fragment() {
 
     private var _binding: FragmentMyDevicesListBinding?=null
-    private val deviceViewModel: DeviceViewModel by activityViewModels()
-    private val userViewModel: UserViewModel by activityViewModels()
+    private val devicesViewModel: DevicesViewModel by activityViewModels()
+    private val loggedUserViewModel: LoggedUserViewModel by activityViewModels()
     private lateinit var deviceAdapter: DeviceAdapter
 
     private val binding get()=_binding!!
@@ -26,8 +28,8 @@ class MyDevicesListFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding=FragmentMyDevicesListBinding.inflate(inflater, container, false)
-        deviceViewModel.getUserDevices(userId = userViewModel.user!!.id){
-            deviceAdapter= DeviceAdapter(requireContext(), deviceViewModel.currentUserDevices!!)
+        devicesViewModel.getUserDevices(userId = loggedUserViewModel.user!!.id){
+            deviceAdapter= DeviceAdapter(requireContext(), devicesViewModel.currentUserDevices!!)
             binding.myDevicesList.adapter=deviceAdapter
         }
         return binding.root

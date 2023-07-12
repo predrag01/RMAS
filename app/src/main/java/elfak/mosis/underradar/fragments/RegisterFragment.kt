@@ -28,6 +28,7 @@ import com.google.firebase.storage.StorageReference
 import elfak.mosis.underradar.R
 import elfak.mosis.underradar.data.User
 import elfak.mosis.underradar.databinding.FragmentRegisterBinding
+import elfak.mosis.underradar.viewmodels.LoggedUserViewModel
 import elfak.mosis.underradar.viewmodels.UserViewModel
 import java.util.UUID
 import android.content.Intent as Intent
@@ -35,30 +36,18 @@ import android.content.Intent as Intent
 
 class RegisterFragment : Fragment() {
 
-    private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var progressDialog : ProgressDialog
     private var _binding: FragmentRegisterBinding?=null
-    private  lateinit var database: DatabaseReference
-    private val userViewModel: UserViewModel by activityViewModels()
+    private val loggedUserViewModel: LoggedUserViewModel by activityViewModels()
     private var imageURI: Uri? = null
-    private lateinit var storageRef : StorageReference
-
     private val binding get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         // Inflate the layout for this fragment
-        firebaseAuth=FirebaseAuth.getInstance()
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
-        database= Firebase.database.reference
-        storageRef=FirebaseStorage.getInstance().reference
         progressDialog= ProgressDialog(requireContext())
         progressDialog.setMessage("Loading...")
         progressDialog.setCancelable(false)
@@ -80,7 +69,15 @@ class RegisterFragment : Fragment() {
                     email = binding.registerEditTextEmail.text.toString(),
                 )
                 progressDialog.show()
-                createAccount(user, binding.registerEditTextPassword.text.toString())
+                loggedUserViewModel.register(user, binding.registerEditTextPassword.text.toString(), imageURI,
+                onSuccess = {
+                    findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
+                    progressDialog.dismiss()
+                    Toast.makeText(context, "Logged as "+ user.userName, Toast.LENGTH_SHORT).show()
+                },
+                onFailure = {
+                    progressDialog.dismiss()
+                })
             }
         }
 
@@ -102,7 +99,6 @@ class RegisterFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
 
         if(requestCode==2 && resultCode==RESULT_OK && data!=null)
         {
@@ -182,51 +178,5 @@ class RegisterFragment : Fragment() {
                 .show()
             return false
         }
-    }
-
-    private fun createAccount(user: User, password: String)
-    {
-        firebaseAuth.createUserWithEmailAndPassword(user.email, password)
-            .addOnSuccessListener { it ->
-                user.id=it.user!!.uid
-                if(imageURI!==null)
-                {
-                    val uuid=UUID.randomUUID().toString()+".jpg"
-                    storageRef.child(uuid).putFile(imageURI!!).addOnSuccessListener {
-                        storageRef.child(uuid).downloadUrl.addOnSuccessListener {uri->
-                            user.imageURL=uri.toString()
-                            database.child("Users").child(user.id).setValue(user).addOnSuccessListener {
-                                userViewModel.user=user
-                                progressDialog.dismiss()
-                                findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
-                            }.addOnFailureListener {
-                                progressDialog.dismiss()
-                                Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
-                            }
-                            }.addOnFailureListener{
-                            progressDialog.dismiss()
-                            Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
-                        }
-                        }.addOnFailureListener{
-                        progressDialog.dismiss()
-                        Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
-                    }
-                }
-                else
-                {
-                    database.child("Users").child(user.id).setValue(user).addOnSuccessListener {
-                        userViewModel.user=user
-                        progressDialog.dismiss()
-                        findNavController().navigate(R.id.action_registerFragment_to_homeFragment)
-                    }.addOnFailureListener {
-                        progressDialog.dismiss()
-                        Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-            .addOnFailureListener{
-                progressDialog.dismiss()
-                Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
-            }
     }
 }

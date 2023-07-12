@@ -7,6 +7,7 @@ import android.net.Uri
 import android.text.BoringLayout
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
@@ -36,18 +37,16 @@ class DeviceViewModel : ViewModel() {
 
     private val _device=MutableLiveData<Device?>(null)
     private val _devices=MutableLiveData<List<Device>>(emptyList())
-    private val _currentUserDevices=MutableLiveData<List<Device>>(emptyList())
+
+    var all: Boolean=true
+    var camera: Boolean=false
+    var radar:Boolean=false
     var device
         get() = _device.value
         set(value) { _device.value=value}
 
-    var devices
-        get()=_devices.value
-        set(va){_devices.value=va}
+    val devices: LiveData<List<Device>> get() = _devices
 
-    var currentUserDevices
-        get()=_currentUserDevices.value
-        set(va){_currentUserDevices.value=va}
     fun addDevice(device: Device, user: User, imgURI: Uri?=null)
     {
         if(imgURI!=null)
@@ -59,6 +58,10 @@ class DeviceViewModel : ViewModel() {
                     database.child("Devices").child(device.id).setValue(device)
                 }
             }
+        }
+        else
+        {
+            database.child("Devices").child(device.id).setValue(device)
         }
         database.child("Users").child(device.ownerId).child("points").setValue(user.points+10)
     }
@@ -77,8 +80,15 @@ class DeviceViewModel : ViewModel() {
 
         return earthRadius * c
     }
-    fun getDevices(location: LatLng, radius: Int=10000, all: Boolean=true, camera: Boolean=false, radar: Boolean=false,
-                   onDataLoaded: () -> Unit)
+
+    fun filterLocations(all:Boolean?, camera:Boolean?, radar:Boolean?, loc: LatLng, rad: Int=10000)
+    {
+        this.all= all!!
+        this.camera=camera!!
+        this.radar=radar!!
+        getDevices(location=loc, radius=rad, onDataLoaded = {})
+    }
+    fun getDevices(location: LatLng, radius: Int=10000, onDataLoaded: () -> Unit)
     {
         database.child("Devices").addValueEventListener(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -102,7 +112,7 @@ class DeviceViewModel : ViewModel() {
                                         deviceList.add(d)
                                     }
                                 }
-                                else
+                                else if (radar)
                                 {
                                     if(d?.type=="Radar")
                                     {
@@ -112,7 +122,7 @@ class DeviceViewModel : ViewModel() {
                             }
                             }
                         }
-                    devices=deviceList
+                    _devices.value=deviceList
                     onDataLoaded()
                 }
             }
@@ -135,30 +145,5 @@ class DeviceViewModel : ViewModel() {
         device!!.dislike=device!!.dislike+1
         database.child("Devices").child(device!!.id).child("dislike").setValue(device!!.dislike)
         database.child("Users").child(user.id).child("points").setValue(user.points+10)
-    }
-
-    fun getUserDevices(userId: String, onDataLoaded: () ->Unit)
-    {
-        database.child("Devices").orderByChild("ownerId").equalTo(userId)
-            .addListenerForSingleValueEvent(object: ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists())
-                    {
-                        val devicesList= mutableListOf<Device>()
-                        for(device in snapshot.children)
-                        {
-                            val dev=device.getValue(Device::class.java)
-                            dev?.let { devicesList.add(it) }
-                        }
-                        currentUserDevices=devicesList
-                        onDataLoaded()
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    println("Failed to load comments: ${error.message}")
-                }
-
-            })
     }
 }

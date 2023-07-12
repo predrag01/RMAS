@@ -18,13 +18,18 @@ import androidx.fragment.app.activityViewModels
 import elfak.mosis.underradar.R
 import elfak.mosis.underradar.databinding.FragmentFilterBinding
 import elfak.mosis.underradar.viewmodels.DeviceViewModel
+import elfak.mosis.underradar.viewmodels.LoggedUserViewModel
 import elfak.mosis.underradar.viewmodels.UserViewModel
 
 class FilterFragment : DialogFragment() {
 
     private  var _binding: FragmentFilterBinding?=null
-    private val userViewModel: UserViewModel by activityViewModels()
+    private val loggedUserViewModel: LoggedUserViewModel by activityViewModels()
     private val deviceViewModel: DeviceViewModel by activityViewModels()
+    private var radius: Int = 10
+    private var all:Boolean=true
+    private var camera:Boolean=false
+    private var radar:Boolean=false
     private val binding get()=_binding!!
 
     override fun onCreateView(
@@ -55,6 +60,35 @@ class FilterFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        if(deviceViewModel.all)
+        {
+            binding.filterAllCheckbox.isChecked=true
+            binding.filterCameraCheckbox.isChecked=false
+            binding.filterRadarCheckbox.isChecked=false
+            all=true
+            camera=false
+            radar=false
+        }
+        else if(deviceViewModel.camera)
+        {
+            binding.filterCameraCheckbox.isChecked=true
+            binding.filterAllCheckbox.isChecked=false
+            binding.filterRadarCheckbox.isChecked=false
+            all=false
+            camera=true
+            radar=false
+        }
+        else
+        {
+            binding.filterRadarCheckbox.isChecked=true
+            binding.filterAllCheckbox.isChecked=false
+            binding.filterCameraCheckbox.isChecked=false
+            all=false
+            camera=false
+            radar=true
+        }
+
+
         binding.filterCameraCheckbox.setOnClickListener {
 
             if(!binding.filterAllCheckbox.isChecked && !binding.filterRadarCheckbox.isChecked)
@@ -72,9 +106,13 @@ class FilterFragment : DialogFragment() {
                 binding.filterRadarCheckbox.setChecked(false)
             }
 
-            deviceViewModel.getDevices(location = userViewModel.location!!, camera = true){
-                Toast.makeText(requireContext(), "Camera filtered", Toast.LENGTH_SHORT).show()
-            }
+            all=false
+            camera=true
+            radar=false
+
+            deviceViewModel.filterLocations(all = this.all, camera = this.camera, radar = this.radar,
+                loc = loggedUserViewModel.location!!)
+
         }
 
         binding.filterAllCheckbox.setOnClickListener {
@@ -93,9 +131,14 @@ class FilterFragment : DialogFragment() {
             {
                 binding.filterRadarCheckbox.setChecked(false)
             }
-            deviceViewModel.getDevices(location = userViewModel.location!!, all=true){
-                Toast.makeText(requireContext(), "All filtered", Toast.LENGTH_SHORT).show()
-            }
+
+            all=true
+            camera=false
+            radar=false
+
+            deviceViewModel.filterLocations(all = this.all, camera = this.camera, radar = this.radar,
+                loc = loggedUserViewModel.location!!)
+
         }
 
         binding.filterRadarCheckbox.setOnClickListener {
@@ -114,9 +157,20 @@ class FilterFragment : DialogFragment() {
             {
                 binding.filterAllCheckbox.setChecked(false)
             }
-            deviceViewModel.getDevices(location = userViewModel.location!!, radar = true){
-                Toast.makeText(requireContext(), "Radar filtered", Toast.LENGTH_SHORT).show()
-            }
+
+            all=false
+            camera=false
+            radar=true
+
+            deviceViewModel.filterLocations(all = this.all, camera = this.camera, radar = this.radar,
+                loc = loggedUserViewModel.location!!)
+
+        }
+
+        binding.slider.addOnChangeListener { _, value, _ ->
+            radius = value.toInt() * 1000
+            deviceViewModel.filterLocations(all = this.all, camera = this.camera, radar = this.radar,
+                loc = loggedUserViewModel.location!!, rad=radius)
         }
     }
 }

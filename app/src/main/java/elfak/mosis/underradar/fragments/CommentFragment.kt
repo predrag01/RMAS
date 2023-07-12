@@ -45,14 +45,14 @@ class CommentFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.commentList.adapter=commentAdapter
         binding.deviceButtonAddComment.setOnClickListener {
-            if(binding.deviceDetailsEditTextComment.text.isNotBlank())
+            /*if(binding.deviceDetailsEditTextComment.text.isNotBlank())
             {
                 commentViewModel.addComment(binding.deviceDetailsEditTextComment.text.toString(),
                     deviceViewModel.device!!.id, userViewModel.user!!)
                 (requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE)as InputMethodManager)
                     .hideSoftInputFromWindow(view.windowToken, 0)
                 binding.deviceDetailsEditTextComment.text.clear()
-            }
+            }*/
         }
     }
 }

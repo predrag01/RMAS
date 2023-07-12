@@ -29,8 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/all"
-            android:textColor="@color/black"
-            android:checked="true"/>
+            android:textColor="@color/black"/>
 
         <CheckBox
             android:id="@+id/filterCameraCheckbox"
@@ -66,7 +65,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:valueFrom="0"
-                android:valueTo="100"
+                android:valueTo="60"
                 android:value="10" />
 
 

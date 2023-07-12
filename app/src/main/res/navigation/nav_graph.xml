@@ -72,9 +72,6 @@
         <action
             android:id="@+id/action_addDeviceFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
-        <action
-            android:id="@+id/action_addDeviceFragment_to_deviceDetailsFragment"
-            app:destination="@id/deviceDetailsFragment" />
     </fragment>
     <fragment
         android:id="@+id/deviceDetailsFragment"
@@ -84,9 +81,6 @@
         <action
             android:id="@+id/action_deviceDetailsFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
-        <action
-            android:id="@+id/action_deviceDetailsFragment_to_addDeviceFragment"
-            app:destination="@id/addDeviceFragment" />
     </fragment>
     <fragment
         android:id="@+id/myDevicesListFragment"

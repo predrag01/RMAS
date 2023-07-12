@@ -21,22 +21,20 @@ import elfak.mosis.underradar.R
 import elfak.mosis.underradar.data.Device
 import elfak.mosis.underradar.databinding.FragmentAddDeviceBinding
 import elfak.mosis.underradar.viewmodels.DeviceViewModel
+import elfak.mosis.underradar.viewmodels.LoggedUserViewModel
 import elfak.mosis.underradar.viewmodels.UserViewModel
 
 
 class AddDeviceFragment : Fragment() {
 
     private var _binding: FragmentAddDeviceBinding?=null
-    private val userViewModel: UserViewModel by activityViewModels()
     private val deviceViewModel: DeviceViewModel by activityViewModels()
+    private val loggedUserViewModel: LoggedUserViewModel by activityViewModels()
     private var selectedIndex=0
     private var imageURI: Uri? = null
     private lateinit var selected:String
     private val binding get()=_binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -73,16 +71,16 @@ class AddDeviceFragment : Fragment() {
                     title = binding.addDeviceEditTextTitle.text.toString(),
                     type = selected,
                     description = binding.addDeviceEditTextDescription.text.toString(),
-                    ownerId = userViewModel.user!!.id,
-                    latitude = userViewModel.location!!.latitude,
-                    longitude = userViewModel.location!!.longitude)
+                    ownerId = loggedUserViewModel.user!!.id,
+                    latitude = loggedUserViewModel.location!!.latitude,
+                    longitude = loggedUserViewModel.location!!.longitude)
                 if(imageURI!=null)
                 {
-                    deviceViewModel.addDevice(device, userViewModel.user!!, imageURI)
+                    deviceViewModel.addDevice(device, loggedUserViewModel.user!!, imageURI)
                 }
                 else
                 {
-                    deviceViewModel.addDevice(device, userViewModel.user!!)
+                    deviceViewModel.addDevice(device, loggedUserViewModel.user!!)
                 }
                 findNavController().navigate(R.id.action_addDeviceFragment_to_homeFragment)
             }

@@ -1,43 +1,34 @@
 package elfak.mosis.underradar.fragments
 
 import android.Manifest
-import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import elfak.mosis.underradar.R
 import elfak.mosis.underradar.data.Device
 import elfak.mosis.underradar.databinding.FragmentHomeBinding
 import elfak.mosis.underradar.viewmodels.DeviceViewModel
+import elfak.mosis.underradar.viewmodels.LoggedUserViewModel
 import elfak.mosis.underradar.viewmodels.UserViewModel
 
 class HomeFragment : Fragment() {
@@ -46,9 +37,10 @@ class HomeFragment : Fragment() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var _binding: FragmentHomeBinding?=null
     private val userViewModel: UserViewModel by activityViewModels()
+    private val loggedUserViewModel: LoggedUserViewModel by activityViewModels()
     private val deviceViewModel: DeviceViewModel by activityViewModels()
-    private lateinit var database: DatabaseReference
-    private val devicesMap: MutableMap<Marker?, Device> = mutableMapOf()
+    private var devicesMap: MutableMap<Marker?, Device> = mutableMapOf()
+    private var map: GoogleMap? =null
     private val binding get()=_binding!!
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,9 +48,7 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding=FragmentHomeBinding.inflate(inflater, container, false)
-        database=Firebase.database.reference
         deviceViewModel.device=null
-        
         return binding.root
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,9 +59,10 @@ class HomeFragment : Fragment() {
         fusedLocationClient= LocationServices.getFusedLocationProviderClient(requireActivity())
 
         mapFragment!!.getMapAsync{ mMap ->
+            map =mMap
             mMap.mapType = GoogleMap.MAP_TYPE_NORMAL
 
-            mMap.clear() //clear old markers
+            mMap.clear()
             mMap.uiSettings.isZoomControlsEnabled = true
             mMap.uiSettings.isCompassEnabled = true
 
@@ -86,8 +77,10 @@ class HomeFragment : Fragment() {
             fusedLocationClient.lastLocation.addOnCompleteListener {location->
                 if(location.result  !=null)
                 {
+                    Toast.makeText(context, "Promena lokacije", Toast.LENGTH_SHORT).show()
                     lastLocation=location.result
                     val currentLatLong= LatLng(location.result.latitude, location.result.longitude)
+                    loggedUserViewModel.location=currentLatLong
 
                     val googlePlex = CameraPosition.builder()
                         .target(currentLatLong)
@@ -96,15 +89,19 @@ class HomeFragment : Fragment() {
                         .tilt(0f)
                         .build()
 
-                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 900, null)
+                    mMap.animateCamera(CameraUpdateFactory.newCameraPosition(googlePlex), 1000, null)
 
-                    setUpMarkers(mMap)
+                    if(deviceViewModel.devices!=null)
+                    {
+                        deviceViewModel.getDevices(location = LatLng(lastLocation.latitude, lastLocation.longitude),
+                            onDataLoaded = {
+                                setUpMarkers()
+                            })
+                    }
                 }
             }.addOnFailureListener{
                 Toast.makeText(context, it.toString(), Toast.LENGTH_SHORT).show()
             }
-
-
         }
 
         binding.addButton.setOnClickListener{
@@ -112,10 +109,9 @@ class HomeFragment : Fragment() {
                 if(location.result  !=null)
                 {
                     lastLocation=location.result
-                    userViewModel.location=LatLng(location.result.latitude, location.result.longitude)
                 }
             }
-            userViewModel.location=LatLng(lastLocation.latitude, lastLocation.longitude)
+            loggedUserViewModel.location=LatLng(lastLocation.latitude, lastLocation.longitude)
             findNavController().navigate(R.id.action_homeFragment_to_addDeviceFragment)
         }
 
@@ -128,63 +124,38 @@ class HomeFragment : Fragment() {
                 if(location.result  !=null)
                 {
                     lastLocation=location.result
-                    userViewModel.location=LatLng(location.result.latitude, location.result.longitude)
                 }
             }
-            userViewModel.location=LatLng(lastLocation.latitude, lastLocation.longitude)
+            loggedUserViewModel.location=LatLng(lastLocation.latitude, lastLocation.longitude)
             val filterDialog= FilterFragment()
             filterDialog.show(requireActivity().supportFragmentManager, "showFilterDialog")
         }
+
+        deviceViewModel.devices.observe(viewLifecycleOwner) { devices ->
+            setUpMarkers()
+        }
     }
 
-    /*override fun onResume() {
+    override fun onResume() {
         super.onResume()
+        setUpMarkers()
+    }
 
-        val filterFragment = childFragmentManager.findFragmentByTag("showFilterDialog") as? FilterFragment
-        filterFragment?.dialog?.setOnDismissListener {
-
-        }
-    }*/
-
-    private fun setUpMarkers(map: GoogleMap)
+    private fun setUpMarkers()
     {
-        deviceViewModel.getDevices(location = LatLng(lastLocation.latitude, lastLocation.longitude)){
-            if(deviceViewModel.devices!=null)
+        map?.clear()
+        devicesMap= mutableMapOf()
+        val devices = deviceViewModel.devices.value
+        if(devices!=null)
+        {
+            for(device in devices)
             {
-                for(device in deviceViewModel.devices!!)
-                {
-                    val marker=map.addMarker(MarkerOptions().position(LatLng(device.latitude, device.longitude)).title(device.type))
-                    devicesMap[marker] = device
-                }
+                val marker=map?.addMarker(MarkerOptions().position(LatLng(device.latitude, device.longitude)).title(device.type))
+                devicesMap[marker] = device
             }
         }
 
-
-        /*database.child("Devices").addValueEventListener(object: ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists())
-                {
-                    devicesMap.clear()
-                    val deviceList= mutableListOf<Device>()
-                    for(dev in snapshot.children){
-                        val d=dev.getValue(Device::class.java)
-                        d?.let {
-                            deviceList.add(d)
-                            val marker=map.addMarker(MarkerOptions().position(LatLng(d.latitude, d.longitude)).title(d.type))
-                            devicesMap[marker] = d
-                        }
-                    }
-                    deviceViewModel.devices=deviceList
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.w(ContentValues.TAG, "Failed to read value.", error.toException());
-            }
-        })*/
-
-
-        map.setOnMarkerClickListener { marker ->
+        map?.setOnMarkerClickListener { marker ->
 
             if(devicesMap.contains(marker))
             {
@@ -194,11 +165,10 @@ class HomeFragment : Fragment() {
             }
             else
             {
-                Toast.makeText(context, "Ne radi", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Impossible access", Toast.LENGTH_SHORT).show()
             }
 
             true
         }
     }
-
 }

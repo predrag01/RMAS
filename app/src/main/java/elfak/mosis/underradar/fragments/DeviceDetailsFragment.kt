@@ -17,6 +17,7 @@ import elfak.mosis.underradar.R
 import elfak.mosis.underradar.databinding.FragmentDeviceDetailsBinding
 import elfak.mosis.underradar.viewmodels.CommentViewModel
 import elfak.mosis.underradar.viewmodels.DeviceViewModel
+import elfak.mosis.underradar.viewmodels.LoggedUserViewModel
 import elfak.mosis.underradar.viewmodels.UserViewModel
 
 
@@ -60,7 +61,7 @@ class DeviceDetailsFragment : Fragment() {
                 .into(profileImage)
         }
 
-        binding.username.text= userViewModel.user!!.userName
+        binding.username.text= userViewModel.owner!!.userName
         binding.deviceTitle.text=deviceViewModel.device!!.title
         binding.deviceDescription.text=deviceViewModel.device!!.description
         binding.deviceType.text=deviceViewModel.device!!.type
@@ -68,12 +69,12 @@ class DeviceDetailsFragment : Fragment() {
         binding.deviceDislikes.text=deviceViewModel.device!!.dislike.toString()
 
         binding.deviceButtonLike.setOnClickListener {
-            deviceViewModel.like(userViewModel.user!!)
+            deviceViewModel.like(userViewModel.owner!!)
             binding.deviceLikes.text=deviceViewModel.device!!.like.toString()
         }
 
         binding.deviceButtonDislike.setOnClickListener {
-            deviceViewModel.dislike(userViewModel.user!!)
+            deviceViewModel.dislike(userViewModel.owner!!)
             binding.deviceDislikes.text=deviceViewModel.device!!.dislike.toString()
         }
 
