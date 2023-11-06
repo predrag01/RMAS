@@ -4,3 +4,4 @@ UnderRadar - mobilna aplikacija za pronalazenje uredjaja za kontrolu saobracaja.
 # Tehnologije
 - Kotlin
 - Firebase
+- Google Maps
