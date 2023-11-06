@@ -64,18 +64,15 @@ class RangListFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         usersViewModel.users=null
-        Toast.makeText(context, "onPause", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         usersViewModel.users=null
-        Toast.makeText(context, "onDestroy", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         usersViewModel.users=null
-        Toast.makeText(context, "onDestroyView", Toast.LENGTH_SHORT).show()
     }
 }
